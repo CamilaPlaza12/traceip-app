@@ -1,5 +1,4 @@
 package com.example.demo.config;
-import java.time.ZonedDateTime;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -15,9 +14,9 @@ public class DataSeed {
         return args -> {
             if (repo.count() == 0) {
 
-                repo.save(new TraceIpRecord("Brasil", 2862.0, 2L));
+                repo.save(new TraceIpRecord("Brasil", 2757.32, 2L));
 
-                repo.save(new TraceIpRecord("Uruguay", 320.0, 5L));
+                repo.save(new TraceIpRecord("Mexico", 7887.76, 5L));
 
                 repo.save(new TraceIpRecord("Estados Unidos", 9002.23, 4L));
             }

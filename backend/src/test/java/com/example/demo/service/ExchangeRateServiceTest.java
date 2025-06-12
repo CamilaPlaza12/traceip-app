@@ -68,12 +68,14 @@ class ExchangeRateServiceTest {
     }
 
     @Test
-    void shouldThrowCurrencyApiExceptionWhenFixerFails() {
+    void shouldReturnNullWhenFixerFails() {
         when(fixerApiClient.getLatestExchangeRates())
                 .thenThrow(new CurrencyApiException("Fixer API exploded"));
 
-        assertThrows(CurrencyApiException.class, () -> {
-            exchangeRateService.fetchDollarExchangeRate("ARS");
-        });
+        Double result = exchangeRateService.fetchDollarExchangeRate("ARS");
+
+        assertNull(result);
+        
     }
+
 }
