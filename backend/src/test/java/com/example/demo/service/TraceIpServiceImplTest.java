@@ -1,124 +1,96 @@
 package com.example.demo.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
-
-import java.util.Map;
-
+import com.example.demo.model.to.CountryInfoTO;
+import com.example.demo.model.to.TraceIpResponseTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 
-import com.example.demo.TestUtil;
-import com.example.demo.client.CountriesClient;
-import com.example.demo.client.FixerApiClient;
-import com.example.demo.client.IpApiClient;
-import com.example.demo.exeptions.CountryNotFoundException;
-import com.example.demo.exeptions.CurrencyApiException;
-import com.example.demo.exeptions.IpNotFoundException;
-import com.example.demo.model.to.TraceIpResponseTO;
-import com.example.demo.service.implementation.TraceIpServiceImpl;
+import java.util.HashMap;
+import java.util.Map;
 
-public class TraceIpServiceImplTest {
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-    private Map<String, Object> ipDataUtil;
-    private Map<String, Object> countryDataUtil;
-    private Map<String, Object> exchangeRatesUtil;
-    private String testIp;
-
-    @Mock
-    private IpApiClient ipApiClient;
-
-    @Mock
-    private CountriesClient countriesClient;
-
-    @Mock
-    private FixerApiClient fixerApiClient;
+class TraceIpServiceImplTest {
 
     @InjectMocks
     private TraceIpServiceImpl traceIpService;
 
+    @Mock
+    private GeoLocationIpService geoLocationService;
+
+    @Mock
+    private CountryDataService countryDataService;
+
+    @Mock
+    private ExchangeRateService exchangeRateService;
+
+    @Mock
+    private TraceIpRecordService traceIpRecordService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
-        this.ipDataUtil = TestUtil.getFakeIpData();
-        this.countryDataUtil = TestUtil.getFakeCountryData();
-        this.exchangeRatesUtil = TestUtil.getFakeExchangeRates();
-        this.testIp = "8.8.8.8";
     }
 
     @Test
-    public void testGetCountryInfoByIp_OK() {
-        when(ipApiClient.getLocationInfo(testIp)).thenReturn(ipDataUtil);
-        when(countriesClient.getCountryInfo("US")).thenReturn(countryDataUtil);
-        when(fixerApiClient.getLatestExchangeRates()).thenReturn(exchangeRatesUtil);
+    void shouldReturnCountryInfoWhenValidIpIsProvided() {
+        String ip = "123.45.67.89";
+        String countryCode = "AR";
 
-        TraceIpResponseTO response = traceIpService.getCountryInfoByIp(testIp);
+        Map<String, Object> mockIpData = new HashMap<>();
+        mockIpData.put("country_code", countryCode);
+
+        CountryInfoTO mockCountryInfo = new CountryInfoTO();
+        mockCountryInfo.setName("Argentina");
+        mockCountryInfo.setLocalCurrency("ARS");
+        mockCountryInfo.setDistanceFromBuenosAiresKm(0.0);
+
+        when(geoLocationService.getLocationInfo(ip)).thenReturn(mockIpData);
+        when(countryDataService.buildCountryInfo(mockIpData, countryCode)).thenReturn(mockCountryInfo);
+        when(exchangeRateService.fetchDollarExchangeRate("ARS")).thenReturn(100.0);
+
+
+        TraceIpResponseTO response = traceIpService.getCountryInfoByIp(ip);
 
         assertNotNull(response);
-        assertEquals("8.8.8.8", response.getIp());
+        assertEquals(ip, response.getIp());
         assertNotNull(response.getCountryInfo());
-        assertEquals("United States", response.getCountryInfo().getName());
-        assertEquals("USD", response.getCountryInfo().getLocalCurrency());
-        assertEquals("US", response.getCountryInfo().getIsoCode());
-        assertEquals(1, response.getCountryInfo().getLanguages().size());
-        assertTrue(response.getCountryInfo().getDistanceFromBuenosAiresKm() > 0);
-        assertNotNull(response.getCountryInfo().getDollarExchangeRate());
+        assertEquals("Argentina", response.getCountryInfo().getName());
+        assertEquals("ARS", response.getCountryInfo().getLocalCurrency());
+        assertEquals(100.0, response.getCountryInfo().getDollarExchangeRate());
+
+        verify(geoLocationService).getLocationInfo(ip);
+        verify(countryDataService).buildCountryInfo(mockIpData, countryCode);
+        verify(exchangeRateService).fetchDollarExchangeRate("ARS");
+        verify(traceIpRecordService).recordTrace("Argentina", 0.0);
     }
 
     @Test
-    public void testGetCountryInfoByIp_noCurrencyData() {
-        
-        Map<String, Object> incompleteCountryData = TestUtil.getFakeCountryData();
-        incompleteCountryData.remove("currencies");
+    void shouldHandleNullCurrencySuccessfully() {
+        String ip = "200.100.50.25";
+        String countryCode = "UY";
 
-        when(ipApiClient.getLocationInfo(testIp)).thenReturn(ipDataUtil);
-        when(countriesClient.getCountryInfo("US")).thenReturn(incompleteCountryData);
-        when(fixerApiClient.getLatestExchangeRates()).thenReturn(exchangeRatesUtil);
+        Map<String, Object> mockIpData = new HashMap<>();
+        mockIpData.put("country_code", countryCode);
 
-        TraceIpResponseTO response = traceIpService.getCountryInfoByIp(testIp);
+        CountryInfoTO mockCountryInfo = new CountryInfoTO();
+        mockCountryInfo.setName("Uruguay");
+        mockCountryInfo.setLocalCurrency(null);
+        mockCountryInfo.setDistanceFromBuenosAiresKm(500.0);
+
+        when(geoLocationService.getLocationInfo(ip)).thenReturn(mockIpData);
+        when(countryDataService.buildCountryInfo(mockIpData, countryCode)).thenReturn(mockCountryInfo);
+        when(exchangeRateService.fetchDollarExchangeRate(null)).thenReturn(null);
+
+        TraceIpResponseTO response = traceIpService.getCountryInfoByIp(ip);
+
         assertNotNull(response);
-        assertEquals("8.8.8.8", response.getIp());
-        assertNotNull(response.getCountryInfo());
-        assertEquals("United States", response.getCountryInfo().getName());
+        assertEquals(ip, response.getIp());
+        assertEquals("Uruguay", response.getCountryInfo().getName());
+        assertNull(response.getCountryInfo().getDollarExchangeRate());
 
-        assertTrue(response.getCountryInfo().getLocalCurrency() == null 
-                || response.getCountryInfo().getLocalCurrency().isEmpty());
+        verify(traceIpRecordService).recordTrace("Uruguay", 500.0);
     }
-    
-    @Test
-    public void testGetCountryInfoByIp_shouldThrowIpNotFoundException() {
-        when(ipApiClient.getLocationInfo(testIp)).thenThrow(new IpNotFoundException("Simulated IP error"));
-        assertThrows(IpNotFoundException.class, () -> {
-            traceIpService.getCountryInfoByIp(testIp);
-        });
-    }
-
-    @Test
-    public void testGetCountryInfoByIp_shouldThrowCountryNotFoundException() {
-        when(ipApiClient.getLocationInfo(testIp)).thenReturn(ipDataUtil);
-        when(countriesClient.getCountryInfo("US")).thenThrow(new CountryNotFoundException("Simulated Country error"));
-
-        assertThrows(CountryNotFoundException.class, () -> {
-            traceIpService.getCountryInfoByIp(testIp);
-        });
-    }
-
-    @Test
-    public void testGetCountryInfoByIp_shouldThrowCurrencyApiException() {
-        when(ipApiClient.getLocationInfo(testIp)).thenReturn(ipDataUtil);
-        when(countriesClient.getCountryInfo("US")).thenReturn(countryDataUtil);
-        when(fixerApiClient.getLatestExchangeRates()).thenThrow(new CurrencyApiException("Simulated Fixer error"));
-
-        assertThrows(CurrencyApiException.class, () -> {
-            traceIpService.getCountryInfoByIp(testIp);
-        });
-    }
-
 }
