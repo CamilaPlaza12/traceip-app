@@ -1,6 +1,5 @@
 package com.example.demo.controller.traceIP;
 
-import com.example.demo.model.to.CountryInfoTO;
 import com.example.demo.model.to.TraceIpResponseTO;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -8,6 +7,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,13 @@ public interface TraceIpAPI {
     })
     @GetMapping("/api/country-info")
     ResponseEntity<TraceIpResponseTO> getCountryInfoByIp(
-            @Parameter(description = "IPv4 or IPv6 address", required = true)
-            @RequestParam @NotBlank(message = "IP address is required") String ip
-    );
+            @Parameter(description = "IP address (e.g., 192.168.0.1)", required = true)
+            @RequestParam
+            @NotBlank(message = "IP address is required")
+            @Pattern(
+                regexp = "^((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\.|$)){4}$",
+                message = "Invalid IP address format"
+             ) 
+             String ip
+    );  
 }
