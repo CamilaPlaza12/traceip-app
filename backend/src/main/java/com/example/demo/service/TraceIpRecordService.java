@@ -1,5 +1,4 @@
 package com.example.demo.service;
-import java.time.ZonedDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,11 +19,17 @@ public class TraceIpRecordService {
             log.warn("Country is null, cannot record trace");
             return;
         }
-        TraceIpRecord record = new TraceIpRecord();
-        record.setCountry(country);
-        record.setDistance(distanceKm);
-        record.setCreationTime(ZonedDateTime.now());
-        traceIpRecordRepository.save(record);
-        log.info("Trace record saved for country: {}", country);
+        int updatedRows = traceIpRecordRepository.incrementInvocationsByCountry(country);
+
+        if (updatedRows == 0) {
+            TraceIpRecord record = new TraceIpRecord();
+            record.setCountry(country);
+            record.setDistanceFromBuenosAiresKm(distanceKm);
+            record.setInvocations(1L);
+            traceIpRecordRepository.save(record);
+            log.info("New trace record created for country: {}", country);
+        } else {
+            log.info("Incremented invocations for country: {}", country);
+        }
     }
 }

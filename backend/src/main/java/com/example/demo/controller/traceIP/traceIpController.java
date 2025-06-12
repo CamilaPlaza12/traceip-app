@@ -19,11 +19,6 @@ public class TraceIpController implements TraceIpAPI {
         this.traceIpService = traceIpService;
     }
 
-    @Override
-    public ResponseEntity<?> traceIP(String ip) {
-        return ResponseEntity.ok("Recibí la IP: " + ip);
-    }
-
    @Override
     public ResponseEntity<TraceIpResponseTO> getCountryInfoByIp(String ip) {
         System.out.println("STARTING PROCESS FOR IP: " + ip);

@@ -33,8 +33,7 @@ class TraceIpRecordServiceTest {
         TraceIpRecord savedRecord = recordCaptor.getValue();
 
         assert savedRecord.getCountry().equals(country);
-        assert savedRecord.getDistance().equals(distance);
-        assert savedRecord.getCreationTime() != null;
+        assert savedRecord.getDistanceFromBuenosAiresKm().equals(distance);
     }
 
     @Test

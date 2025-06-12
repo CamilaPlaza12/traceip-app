@@ -15,9 +15,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/trace-ip")
 public interface TraceIpAPI {
 
-    @GetMapping("/api/trace-test")
-    ResponseEntity<?> traceIP(@RequestParam String ip);
-
     @Operation(summary = "Get country info from IP address", description = "Returns information about the country of the given IP")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Country information successfully retrieved"),

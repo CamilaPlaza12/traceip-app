@@ -27,14 +27,6 @@ public class TraceIpControllerTest {
     }
 
     @Test
-    void testTraceIP_returnString() {
-        String ip = "8.8.8.8";
-        ResponseEntity<?> response = traceIpController.traceIP(ip);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Recibí la IP: " + ip, response.getBody());
-    }
-
-    @Test
     void testGetCountryInfoByIp_OK() {
         String ip = "8.8.8.8";
         TraceIpResponseTO mockResponse = new TraceIpResponseTO();
