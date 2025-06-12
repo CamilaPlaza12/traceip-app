@@ -2,7 +2,6 @@ package com.example.demo.service.implementation;
 
 import com.example.demo.client.FixerApiClient;
 import com.example.demo.client.IpApiClient;
-import com.example.demo.exeptions.CountryNotFoundException;
 import com.example.demo.exeptions.IpNotFoundException;
 import com.example.demo.client.CountriesClient;
 import com.example.demo.model.to.CountryInfoTO;
@@ -39,10 +38,8 @@ public class TraceIpServiceImpl implements TraceIpService {
 
         Map<String, Object> ipData = getIpData(ip);
         String countryCode = extractCountryCode(ipData);
-        Double latitude = (Double) ipData.get("latitude");
-        Double longitude = (Double) ipData.get("longitude");
 
-        CountryInfoTO countryInfo = buildCountryInfo(ipData, countryCode, latitude, longitude);
+        CountryInfoTO countryInfo = buildCountryInfo(ipData, countryCode);
 
         TraceIpResponseTO response = new TraceIpResponseTO();
         response.setIp(ip);
@@ -75,9 +72,12 @@ public class TraceIpServiceImpl implements TraceIpService {
         return null;
     }
 
-    private CountryInfoTO buildCountryInfo(Map<String, Object> ipData, String countryCode, Double lat, Double lon) {
+    private CountryInfoTO buildCountryInfo(Map<String, Object> ipData, String countryCode) {
         Map<String, Object> countryData;
         countryData = countriesClient.getCountryInfo(countryCode);
+        List<Double> latlng = (List<Double>) countryData.get("latlng");
+        Double lat = latlng.get(0);
+        Double lon = latlng.get(1);
 
         String currencyCode = extractCurrencyCodeFromCountry(countryData);
         List<String> languages = extractLanguages(countryData);

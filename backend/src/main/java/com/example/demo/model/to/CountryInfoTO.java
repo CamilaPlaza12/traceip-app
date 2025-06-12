@@ -1,6 +1,5 @@
 package com.example.demo.model.to;
 
-import jakarta.validation.constraints.*;
 import lombok.Data;
 import java.util.List;
 

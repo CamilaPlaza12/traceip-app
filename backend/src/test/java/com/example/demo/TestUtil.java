@@ -17,7 +17,7 @@ public class TestUtil {
 
     public static Map<String, Object> getFakeCountryData() {
         Map<String, Object> countryData = new HashMap<>();
-
+        countryData.put("latlng", List.of(40.0, -74.0));
         countryData.put("currencies", List.of(Map.of("code", "USD")));
         countryData.put("languages", List.of(Map.of("name", "English")));
         countryData.put("timezones", List.of("America/New_York"));
