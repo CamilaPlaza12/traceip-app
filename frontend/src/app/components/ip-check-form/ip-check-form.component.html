@@ -1,0 +1,82 @@
+<div class="ip-check-container">
+  <div class="ip-check-card">
+
+    <ng-container *ngIf="formVisible; else resultTemplate">
+      <h2>Check Your IP</h2>
+
+      <div class="form-group">
+        <label for="ip">Type yout IP Address</label>
+        <input
+          id="ip"
+          type="text"
+          [(ngModel)]="ipAddress"
+          name="ipAddress"
+          required
+          pattern="^(\d{1,3}\.){3}\d{1,3}$"
+          class="form-control"
+          placeholder="E.g., 8.8.8.8"
+          (keypress)="validateKey($event)"
+        />
+      </div>
+
+      <div *ngIf="error" class="error">{{ error }}</div>
+
+      <button
+        (click)="searchIp()"
+        [disabled]="!isValidIp(ipAddress) || loading"
+        class="btn"
+      >
+        {{ loading ? 'Searching...' : 'Search IP' }}
+      </button>
+
+      <button class="button-ipTrace" (click)="goToStats()">View Statistics</button>
+      <div *ngIf="loading" class="spinner-container">
+        <div class="spinner"></div>
+      </div>
+
+
+    </ng-container>
+
+    <ng-template #resultTemplate>
+      <h2 class="trace-title">IP Trace</h2>
+      <div class="result-scrollable">
+
+
+        <div *ngIf="traceData" class="trace-result">
+          <div class="label">Name:</div>
+          <div class="value">{{ traceData.countryInfo.name }}</div>
+
+          <div class="label">ISO Code:</div>
+          <div class="value">{{ traceData.countryInfo.isoCode }}</div>
+
+          <div class="label">Languages:</div>
+          <div class="value">
+            <div *ngFor="let lang of traceData.countryInfo.languages">{{ lang }}</div>
+          </div>
+
+          <div class="label">Current Times:</div>
+          <div class="value">
+            <div *ngFor="let time of traceData.countryInfo.currentTimes">{{ time }}</div>
+          </div>
+
+          <div class="label">Distance from<br>Buenos Aires:</div>
+          <div class="value">{{ traceData.countryInfo.distanceFromBuenosAiresKm }} km</div>
+
+          <div class="label">Local Currency:</div>
+          <div class="value">{{ traceData.countryInfo.localCurrency }}</div>
+
+          <div class="label">Dollar Exchange Rate:</div>
+          <div class="value">
+            {{ traceData.countryInfo.dollarExchangeRate === null || traceData.countryInfo.dollarExchangeRate === undefined ? 'Not available' : (traceData.countryInfo.dollarExchangeRate | number:'1.2-4') }}
+          </div>
+        </div>
+
+        <button class="button-ipTrace" (click)="goBack()">Go Back</button>
+      </div>
+    </ng-template>
+
+
+
+  </div>
+</div>
+
