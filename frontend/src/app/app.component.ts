@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { IpCheckFormComponent } from './components/ip-check-form/ip-check-form.component';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [IpCheckFormComponent],
-  template: `<app-ip-check-form />`,
+  imports: [RouterOutlet],
+  template: `<router-outlet></router-outlet>`
 })
 export class AppComponent {}

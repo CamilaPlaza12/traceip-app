@@ -13,7 +13,9 @@ export class IpCheckService {
   constructor(private http: HttpClient) {}
 
   getTraceInfo(ip: string): Observable<TraceIpResponse> {
-    return this.http.get<TraceIpResponse>(`${this.baseUrl}/ip/${ip}`);
+    return this.http.get<TraceIpResponse>(`${this.baseUrl}/trace-ip/api/country-info`, {
+      params: { ip }
+    });
   }
 
   getMockTraceInfo(ip: string): Observable<TraceIpResponse> {
@@ -45,6 +47,21 @@ export class IpCheckService {
 }
 
   getStat(type: 'min' | 'max' | 'avg'): Observable<number> {
-    return this.http.get<number>(`${this.baseUrl}/stats/${type}`);
+    const urlMap = {
+      max: `${this.baseUrl}/stats/max-distance`,
+      min: `${this.baseUrl}/stats/min-distance`,
+      avg: `${this.baseUrl}/stats/average-distance`
+    };
+    return this.http.get<number>(urlMap[type]);
   }
+
+  getStatMock(type: 'min' | 'max' | 'avg'): Observable<number> {
+    const mockData = {
+      max: 12345.5888888888888888888888,
+      min: 42.236555555555555555,
+      avg: 678.23
+    };
+    return of(mockData[type]);
+  }
+
 }

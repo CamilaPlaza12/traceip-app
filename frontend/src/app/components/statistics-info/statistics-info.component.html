@@ -1,0 +1,35 @@
+<div class="statistics-container">
+  <div class="statistics-card">
+    <h2 class="trace-title">Statistics</h2>
+
+    <div *ngIf="error" class="error">{{ error }}</div>
+
+    <ng-container *ngIf="hasStats(); else noData">
+      <div class="trace-result">
+        <div class="label">Max Distance:</div>
+        <div class="value">
+          {{ maxDistance }} km
+          <span class="description">– Farthest distance from Buenos Aires queried</span>
+        </div>
+
+        <div class="label">Min Distance:</div>
+        <div class="value">
+          {{ minDistance }} km
+          <span class="description">– Nearest distance from Buenos Aires queried</span>
+        </div>
+
+        <div class="label">Average Distance:</div>
+        <div class="value">
+          {{ avgDistance }} km
+          <span class="description">– Average distance from all queries</span>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #noData>
+      <div class="no-data">No data available yet. Try performing a trace first!</div>
+    </ng-template>
+
+    <button class="button-ipTrace" (click)="goBack()">Go Back</button>
+  </div>
+</div>

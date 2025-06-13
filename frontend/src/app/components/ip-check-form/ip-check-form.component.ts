@@ -1,27 +1,31 @@
-import { Component } from '@angular/core';
+import { Component} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IpCheckService } from '../../services/ip-check.service';
+import { Router } from '@angular/router';
 import { TraceIpResponse } from '../../models/trace-ip-response.model';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-ip-check-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HttpClientModule],
+  providers: [IpCheckService],
   templateUrl: './ip-check-form.component.html',
   styleUrls: ['./ip-check-form.component.css']
 })
+
 export class IpCheckFormComponent {
-  ipAddress = '8.8.8.7';
+  ipAddress = '';
   traceData?: TraceIpResponse;
   statResult?: number;
   error?: string;
   formVisible = true;
 
-  constructor(private traceService: IpCheckService) {}
+  constructor(private traceService: IpCheckService, private router: Router) {}
 
   searchIp() {
-    this.traceService.getMockTraceInfo(this.ipAddress).subscribe({
+    this.traceService.getTraceInfo(this.ipAddress).subscribe({
       next: data => {
         this.traceData = data;
         this.error = undefined;
@@ -34,17 +38,6 @@ export class IpCheckFormComponent {
     });
   }
 
-  consultStatistics(tipo: 'min' | 'max' | 'avg') {
-    this.traceService.getStat(tipo).subscribe({
-      next: result => {
-        this.statResult = result;
-        this.error = undefined;
-      },
-      error: err => {
-        this.error = 'Error al consultar estadística';
-      }
-    });
-  }
 
   goBack() {
     this.formVisible = true;
@@ -72,6 +65,9 @@ export class IpCheckFormComponent {
     }
   }
 
+  goToStats() {
+    this.router.navigate(['/statistics']);
+  }
 
 
 }
