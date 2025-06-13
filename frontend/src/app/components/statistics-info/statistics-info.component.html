@@ -8,19 +8,19 @@
       <div class="trace-result">
         <div class="label">Max Distance:</div>
         <div class="value">
-          {{ maxDistance }} km
+          {{ maxDistance | number:'1.2-2' }} km
           <span class="description">– Farthest distance from Buenos Aires queried</span>
         </div>
 
         <div class="label">Min Distance:</div>
         <div class="value">
-          {{ minDistance }} km
+          {{ minDistance | number:'1.2-2' }} km
           <span class="description">– Nearest distance from Buenos Aires queried</span>
         </div>
 
         <div class="label">Average Distance:</div>
         <div class="value">
-          {{ avgDistance }} km
+          {{ avgDistance | number:'1.2-2' }} km
           <span class="description">– Average distance from all queries</span>
         </div>
       </div>

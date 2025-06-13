@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CountryDataService {
     @Autowired CountriesClient countriesClient;
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
+
 
     public CountryInfoTO buildCountryInfo(Map<String, Object> ipData, String countryCode) {
         Map<String, Object> countryData = countriesClient.getCountryInfo(countryCode);
@@ -73,7 +76,12 @@ public class CountryDataService {
         List<String> currentTimes = new ArrayList<>();
         for (String tz : timezones) {
             ZonedDateTime zonedDateTime = ZonedDateTime.now(ZoneId.of(tz));
-            currentTimes.add(zonedDateTime.toString());
+            String formattedTime = zonedDateTime.format(TIME_FORMATTER);
+
+            // Extraemos el nombre de la zona (ejemplo: "UTC", "UTC+01:00")
+            String zone = zonedDateTime.getZone().toString();
+
+            currentTimes.add(formattedTime + " (" + zone + ")");
         }
         return currentTimes;
     }

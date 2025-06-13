@@ -15,6 +15,7 @@ public class ExchangeRateService {
 
     @Autowired
     private FixerApiClient fixerApiClient;
+    
 
     public Double fetchDollarExchangeRate(String currencyCode) {
         if (currencyCode == null || currencyCode.isEmpty()) {

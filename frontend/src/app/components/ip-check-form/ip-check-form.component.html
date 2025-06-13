@@ -63,7 +63,9 @@
           <div class="value">{{ traceData.countryInfo.localCurrency }}</div>
 
           <div class="label">Dollar Exchange Rate:</div>
-          <div class="value">{{ traceData.countryInfo.dollarExchangeRate }}</div>
+          <div class="value">
+            {{ traceData.countryInfo.dollarExchangeRate === null || traceData.countryInfo.dollarExchangeRate === undefined ? 'Not available' : (traceData.countryInfo.dollarExchangeRate | number:'1.2-4') }}
+          </div>
         </div>
 
         <button class="button-ipTrace" (click)="goBack()">Go Back</button>
