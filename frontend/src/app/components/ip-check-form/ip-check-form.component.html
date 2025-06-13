@@ -33,35 +33,38 @@
 
     <ng-template #resultTemplate>
       <h2 class="trace-title">IP Trace</h2>
+      <div class="result-scrollable">
 
-      <div *ngIf="traceData" class="trace-result">
-        <div class="label">Name:</div>
-        <div class="value">{{ traceData.countryInfo.name }}</div>
 
-        <div class="label">ISO Code:</div>
-        <div class="value">{{ traceData.countryInfo.isoCode }}</div>
+        <div *ngIf="traceData" class="trace-result">
+          <div class="label">Name:</div>
+          <div class="value">{{ traceData.countryInfo.name }}</div>
 
-        <div class="label">Languages:</div>
-        <div class="value">
-          <div *ngFor="let lang of traceData.countryInfo.languages">{{ lang }}</div>
+          <div class="label">ISO Code:</div>
+          <div class="value">{{ traceData.countryInfo.isoCode }}</div>
+
+          <div class="label">Languages:</div>
+          <div class="value">
+            <div *ngFor="let lang of traceData.countryInfo.languages">{{ lang }}</div>
+          </div>
+
+          <div class="label">Current Times:</div>
+          <div class="value">
+            <div *ngFor="let time of traceData.countryInfo.currentTimes">{{ time }}</div>
+          </div>
+
+          <div class="label">Distance from<br>Buenos Aires:</div>
+          <div class="value">{{ traceData.countryInfo.distanceFromBuenosAiresKm }} km</div>
+
+          <div class="label">Local Currency:</div>
+          <div class="value">{{ traceData.countryInfo.localCurrency }}</div>
+
+          <div class="label">Dollar Exchange Rate:</div>
+          <div class="value">{{ traceData.countryInfo.dollarExchangeRate }}</div>
         </div>
 
-        <div class="label">Current Times:</div>
-        <div class="value">
-          <div *ngFor="let time of traceData.countryInfo.currentTimes">{{ time }}</div>
-        </div>
-
-        <div class="label">Distance from<br>Buenos Aires:</div>
-        <div class="value">{{ traceData.countryInfo.distanceFromBuenosAiresKm }} km</div>
-
-        <div class="label">Local Currency:</div>
-        <div class="value">{{ traceData.countryInfo.localCurrency }}</div>
-
-        <div class="label">Dollar Exchange Rate:</div>
-        <div class="value">{{ traceData.countryInfo.dollarExchangeRate }}</div>
+        <button class="button-ipTrace" (click)="goBack()">Go Back</button>
       </div>
-
-      <button class="button-ipTrace" (click)="goBack()">Go Back</button>
     </ng-template>
 
 
