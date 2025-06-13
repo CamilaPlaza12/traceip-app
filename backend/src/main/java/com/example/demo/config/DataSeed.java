@@ -18,7 +18,6 @@ public class DataSeed {
 
                 repo.save(new TraceIpRecord("Mexico", 7887.76, 5L));
 
-                repo.save(new TraceIpRecord("Estados Unidos", 9002.23, 4L));
             }
         };
     }
