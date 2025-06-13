@@ -21,10 +21,12 @@ export class IpCheckFormComponent {
   statResult?: number;
   error?: string;
   formVisible = true;
+  loading = false;
 
   constructor(private traceService: IpCheckService, private router: Router) {}
 
   searchIp() {
+    this.loading = true;
     this.traceService.getTraceInfo(this.ipAddress).subscribe({
       next: data => {
         this.traceData = data;
@@ -34,6 +36,9 @@ export class IpCheckFormComponent {
       error: err => {
         this.error = 'IP inválida o error de servidor';
         this.traceData = undefined;
+      },
+      complete: () => {
+        this.loading = false;
       }
     });
   }

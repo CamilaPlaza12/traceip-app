@@ -23,13 +23,16 @@
 
       <button
         (click)="searchIp()"
-        [disabled]="!isValidIp(ipAddress)"
+        [disabled]="!isValidIp(ipAddress) || loading"
         class="btn"
       >
-        Search IP
+        {{ loading ? 'Searching...' : 'Search IP' }}
       </button>
 
       <button class="button-ipTrace" (click)="goToStats()">View Statistics</button>
+      <div *ngIf="loading" class="spinner-container">
+        <div class="spinner"></div>
+      </div>
 
 
     </ng-container>
